@@ -37,7 +37,7 @@ L.Edit.Marker = L.Handler.extend({
 		if (!icon) {
 			return;
 		}
-		
+
 		// This is quite naughty, but I don't see another way of doing it. (short of setting a new icon)
 		icon.style.display = 'none';
 
@@ -56,8 +56,8 @@ L.Edit.Marker = L.Handler.extend({
 	},
 
 	_offsetMarker: function (icon, offset) {
-		var iconMarginTop = parseInt(icon.style.marginTop, 10) - offset,
-			iconMarginLeft = parseInt(icon.style.marginLeft, 10) - offset;
+		var iconMarginTop = parseInt(icon.style.marginTop, 6) - offset,
+			iconMarginLeft = parseInt(icon.style.marginLeft, 6) - offset;
 
 		icon.style.marginTop = iconMarginTop + 'px';
 		icon.style.marginLeft = iconMarginLeft + 'px';
