@@ -39,7 +39,7 @@ L.Edit.Poly = L.Handler.extend({
 
 		poly.setStyle(poly.options.original);
 
-		if (poly._map) {
+		if (poly._map && this._markerGroup) {
 			poly._map.removeLayer(this._markerGroup);
 			delete this._markerGroup;
 			delete this._markers;
