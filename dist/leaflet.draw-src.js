@@ -154,7 +154,7 @@ L.Draw.Feature = L.Handler.extend({
 
 			this._tooltip = new L.Tooltip(this._map);
 
-			L.DomEvent.on(this._container, 'keyup', this._cancelDrawing, this);
+			// L.DomEvent.on(this._container, 'keyup', this._cancelDrawing, this);
 		}
 	},
 
@@ -165,7 +165,7 @@ L.Draw.Feature = L.Handler.extend({
 			this._tooltip.dispose();
 			this._tooltip = null;
 
-			L.DomEvent.off(this._container, 'keyup', this._cancelDrawing, this);
+			// L.DomEvent.off(this._container, 'keyup', this._cancelDrawing, this);
 		}
 	},
 
@@ -184,6 +184,7 @@ L.Draw.Feature = L.Handler.extend({
 		}
 	}
 });
+
 
 L.Draw.Polyline = L.Draw.Feature.extend({
 	statics: {
