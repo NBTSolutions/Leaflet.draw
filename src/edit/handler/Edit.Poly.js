@@ -30,7 +30,24 @@ L.Edit.Poly = L.Handler.extend({
 			if (!this._markerGroup) {
 				this._initMarkers();
 			}
+
 			this._poly._map.addLayer(this._markerGroup);
+
+      if (!this._mouseMarker) {
+        this._mouseMarker = L.marker(this._poly._map.getCenter(), {
+          icon: L.divIcon({
+            className: 'leaflet-mouse-marker',
+            iconAnchor: [20, 20],
+            iconSize: [40, 40]
+          }),
+          opacity: 0,
+          zIndexOffset: this.options.zIndexOffset
+        });
+
+        this._mouseMarker
+          .on('mousedown', this._onMouseDown, this)
+          .addTo(this._poly._map);
+      }
 		}
 	},
 
@@ -44,6 +61,14 @@ L.Edit.Poly = L.Handler.extend({
 			delete this._markerGroup;
 			delete this._markers;
 		}
+
+    if (poly._map) {
+      this._mouseMarker
+        .off('mousedown', this._onMouseDown, this);
+        // .off('mouseup', this._onMouseUp, this);
+      poly._map.removeLayer(this._mouseMarker);
+      delete this._mouseMarker;
+    }
 	},
 
 	updateMarkers: function () {
@@ -65,7 +90,8 @@ L.Edit.Poly = L.Handler.extend({
 		for (i = 0, len = latlngs.length; i < len; i++) {
 
 			marker = this._createMarker(latlngs[i], i);
-			marker.on('click', this._onMarkerClick, this);
+			marker.on('dblclick', this._onMarkerDbClick, this)
+      marker.on('click', this._onPolylineExtend, this);
 			this._markers.push(marker);
 		}
 
@@ -112,7 +138,8 @@ L.Edit.Poly = L.Handler.extend({
 		marker
 			.off('drag', this._onMarkerDrag, this)
 			.off('dragend', this._fireEdit, this)
-			.off('click', this._onMarkerClick, this);
+			.off('dblclick', this._onMarkerDbClick, this)
+      .off('click', this._onPolylineExtend, this);
 	},
 
 	_fireEdit: function () {
@@ -135,7 +162,58 @@ L.Edit.Poly = L.Handler.extend({
 		this._poly.redraw();
 	},
 
-	_onMarkerClick: function (e) {
+  _onPolylineExtend: function(e) {
+
+    // the user can only extend polyline
+    if (!(this._poly instanceof L.Polyline)) { return; }
+
+    var marker = e.target;
+    var latLng = marker.getLatLng();
+    var latLngs = this._poly.getLatLngs();
+
+    // this user can only extend the polyline at the start/end node
+    if (!latLng.equals(latLngs[0]) || !latLng.equals(latLngs[latLngs.length - 1])) {
+      return;
+    }
+    console.log('e');
+    var extendStart = latLng.equals(latLngs[0]);
+
+    _map.on('mousemove', _onMouseMove, this);
+  },
+
+  _onMouseMove: function(e) {
+    var newPos = e.layerPoint;
+    var latlng = e.latlng;
+
+    // Update the guide line
+		this._updateGuide(newPos);
+
+		// Update the mouse marker position
+		this._mouseMarker.setLatLng(latlng);
+
+    L.DomEvent.preventDefault(e.originalEvent);
+  },
+
+  _updateGuide: function (newPos) {
+		var markerCount = this._markers.length;
+
+		if (markerCount > 0) {
+			newPos = newPos || this._map.latLngToLayerPoint(this._currentLatLng);
+
+			// draw the guide line
+			this._clearGuides();
+			this._drawGuide(
+				this._map.latLngToLayerPoint(this._markers[markerCount - 1].getLatLng()),
+				newPos
+			);
+		}
+	},
+
+  _onMouseDown: function(e) {
+
+  },
+
+	_onMarkerDbClick: function (e) {
 		var minPoints = L.Polygon && (this._poly instanceof L.Polygon) ? 4 : 3,
 			marker = e.target;
 
@@ -198,7 +276,8 @@ L.Edit.Poly = L.Handler.extend({
 
 			marker
 			    .off('click', onClick, this)
-			    .on('click', this._onMarkerClick, this);
+			    .on('dblclick', this._onMarkerDbClick, this)
+          .off('click', this._onPolylineExtend, this);
 
 			latlng.lat = marker.getLatLng().lat;
 			latlng.lng = marker.getLatLng().lng;

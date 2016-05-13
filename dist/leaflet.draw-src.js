@@ -1195,7 +1195,7 @@ L.Edit.Poly = L.Handler.extend({
 		for (i = 0, len = latlngs.length; i < len; i++) {
 
 			marker = this._createMarker(latlngs[i], i);
-			marker.on('click', this._onMarkerClick, this);
+			marker.on('dblclick', this._onMarkerClick, this);
 			this._markers.push(marker);
 		}
 
@@ -1328,7 +1328,7 @@ L.Edit.Poly = L.Handler.extend({
 
 			marker
 			    .off('click', onClick, this)
-			    .on('click', this._onMarkerClick, this);
+			    .on('dblclick', this._onMarkerClick, this);
 
 			latlng.lat = marker.getLatLng().lat;
 			latlng.lng = marker.getLatLng().lng;
