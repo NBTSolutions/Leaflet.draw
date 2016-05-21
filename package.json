@@ -35,5 +35,6 @@
   ],
   "author": "Jacob Toye",
   "license": "BSD",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "dependencies": {}
 }
