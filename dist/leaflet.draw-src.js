@@ -1144,6 +1144,7 @@ L.Edit.Poly = L.Handler.extend({
 
 	initialize: function (poly, options) {
 		this._poly = poly;
+    this._ignoreDragging = false;
 		L.setOptions(this, options);
 	},
 
@@ -1160,7 +1161,28 @@ L.Edit.Poly = L.Handler.extend({
 			if (!this._markerGroup) {
 				this._initMarkers();
 			}
+
+      if (!(this._poly instanceof L.Polygon)) {
+        this._poly._map.on('draw:created', this._onFinishExtension, this);
+      }
+
 			this._poly._map.addLayer(this._markerGroup);
+
+      if (!this._mouseMarker) {
+        this._mouseMarker = L.marker(this._poly._map.getCenter(), {
+          icon: L.divIcon({
+            className: 'leaflet-mouse-marker',
+            iconAnchor: [20, 20],
+            iconSize: [40, 40]
+          }),
+          opacity: 0,
+          zIndexOffset: this.options.zIndexOffset
+        });
+
+        this._mouseMarker
+          .on('mousedown', this._onMouseDown, this)
+          .addTo(this._poly._map);
+      }
 		}
 	},
 
@@ -1174,6 +1196,19 @@ L.Edit.Poly = L.Handler.extend({
 			delete this._markerGroup;
 			delete this._markers;
 		}
+
+    if (poly._map) {
+      this._mouseMarker
+        .off('mousedown', this._onMouseDown, this);
+        // .off('mouseup', this._onMouseUp, this);
+      poly._map.removeLayer(this._mouseMarker);
+      delete this._mouseMarker;
+
+      if (!(this._poly instanceof L.Polygon)) {
+        this._poly._map.off('draw:created', this._onFinishExtension, this);
+        delete this._extending;
+      }
+    }
 	},
 
 	updateMarkers: function () {
@@ -1195,7 +1230,8 @@ L.Edit.Poly = L.Handler.extend({
 		for (i = 0, len = latlngs.length; i < len; i++) {
 
 			marker = this._createMarker(latlngs[i], i);
-			marker.on('dblclick', this._onMarkerClick, this);
+			marker.on('dblclick', this._onMarkerDbClick, this);
+      marker.on('click', this._check_later, this);
 			this._markers.push(marker);
 		}
 
@@ -1240,9 +1276,10 @@ L.Edit.Poly = L.Handler.extend({
 		this._updateIndexes(i, -1);
 
 		marker
+      .off( 'click', this._check_later, this)
 			.off('drag', this._onMarkerDrag, this)
 			.off('dragend', this._fireEdit, this)
-			.off('click', this._onMarkerClick, this);
+			.off('dblclick', this._onMarkerDbClick, this);
 	},
 
 	_fireEdit: function () {
@@ -1265,7 +1302,73 @@ L.Edit.Poly = L.Handler.extend({
 		this._poly.redraw();
 	},
 
-	_onMarkerClick: function (e) {
+  _onPolylineExtend: function(e) {
+
+    // the user can only extend polyline
+    if (this._poly instanceof L.Polygon) { return; }
+
+    var latLng = e.latlng;
+    var latLngs = this._poly.getLatLngs();
+
+    // set the extending order if the user clicks on the start point
+    if (latLng.equals(latLngs[latLngs.length - 1])) {
+      this._extendOrder = 1;
+    }
+
+    // set the reverse extending order if the user clicks on the end point
+    if (latLng.equals(latLngs[0])) {
+      this._extendOrder = -1;
+    }
+
+    if (!this._extendOrder) { return; }
+
+    this._extending = new L.Draw.Polyline(this._poly._map, {
+      newIcon:new L.DivIcon({
+        iconSize: new L.Point(10, 10),
+        className: 'leaflet-div-icon leaflet-editing-icon'
+      }),
+      zIndexOffset: 2000,
+      drawError: {
+        color: '#b00b00',
+        timeout: 2500
+      },
+      shapeOptions: {
+        stroke: true,
+        color: '#c13104',
+        weight: 4,
+        opacity: 0.5,
+        clickable: true
+      }
+    });
+
+    this._extending.enable();
+
+    this._extending._currentLatLng = latLng;
+    this._extending.addVertex(latLng);
+  },
+
+  _onFinishExtension: function(e) {
+    e.layer.spliceLatLngs(0, 1)
+
+    var newVertices = e.layer.getLatLngs();
+    for (var i = 0, n = newVertices.length; i < n; i++) {
+      if (this._extendOrder === 1) {
+        this._poly.addLatLng(newVertices[i]);
+      } else if (this._extendOrder === -1) {
+        this._poly.spliceLatLngs(0, 0, newVertices[i]);
+      }
+    }
+
+    this.updateMarkers();
+
+    delete this._extending;
+    delete this._extendOrder;
+  },
+
+	_onMarkerDbClick: function (e) {
+
+    window.setTimeout( this._clear_h, 0 );
+
 		var minPoints = L.Polygon && (this._poly instanceof L.Polygon) ? 4 : 3,
 			marker = e.target;
 
@@ -1322,13 +1425,17 @@ L.Edit.Poly = L.Handler.extend({
 		marker1._middleRight = marker2._middleLeft = marker;
 
 		onDragStart = function () {
+
+      this._ignoreDragging = true;
+
 			var i = marker2._index;
 
 			marker._index = i;
 
 			marker
+          .off('click', this._check_later, this)
 			    .off('click', onClick, this)
-			    .on('dblclick', this._onMarkerClick, this);
+			    .on('dblclick', this._onMarkerDbClick, this)
 
 			latlng.lat = marker.getLatLng().lat;
 			latlng.lng = marker.getLatLng().lng;
@@ -1346,6 +1453,8 @@ L.Edit.Poly = L.Handler.extend({
 		};
 
 		onDragEnd = function () {
+      this._ignoreDragging = false;
+
 			marker.off('dragstart', onDragStart, this);
 			marker.off('dragend', onDragEnd, this);
 
@@ -1360,6 +1469,7 @@ L.Edit.Poly = L.Handler.extend({
 		};
 
 		marker
+        .on('click', this._check_later, this)
 		    .on('click', onClick, this)
 		    .on('dragstart', onDragStart, this)
 		    .on('dragend', onDragEnd, this);
@@ -1382,7 +1492,32 @@ L.Edit.Poly = L.Handler.extend({
 		    p2 = map.project(marker2.getLatLng());
 
 		return map.unproject(p1._add(p2)._divideBy(2));
-	}
+	},
+
+  // source code from leaflet-click_0.7
+  _check_later: function(e) {
+
+    var that = this;
+
+    this._clear_h();
+    this._h = window.setTimeout( check, 500 );
+
+    function check() {
+      if (!that._ignoreDragging) {
+        that._onPolylineExtend(e);
+      } else {
+        that._ignoreDragging = false;
+      }
+    }
+  },
+
+  // source code from leaflet-click_0.7
+  _clear_h: function () {
+    if (this._h != null) {
+      window.clearTimeout(this._h);
+      this._h = null;
+    }
+  }
 });
 
 L.Polyline.addInitHook(function () {
