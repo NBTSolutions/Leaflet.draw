@@ -1325,22 +1325,17 @@ L.Edit.Poly = L.Handler.extend({
     if (!this._extendOrder) { return; }
 
     this._extending = new L.Draw.Polyline(this._poly._map, {
-      newIcon:new L.DivIcon({
+      newIcon: new L.DivIcon({
         iconSize: new L.Point(10, 10),
         className: 'leaflet-div-icon leaflet-editing-icon'
       }),
-      zIndexOffset: 2000,
-      drawError: {
-        color: '#b00b00',
-        timeout: 2500
-      },
       shapeOptions: {
-        stroke: true,
         color: '#c13104',
         weight: 4,
-        opacity: 0.5,
-        clickable: true
-      }
+        opacity: 0.5
+      },
+      snapDistance: 15,
+      guideLayers: this._snapper._guides
     });
 
     this._extending.enable();
