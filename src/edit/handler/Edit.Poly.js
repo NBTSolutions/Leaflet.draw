@@ -76,7 +76,14 @@ L.Edit.Poly = L.Handler.extend({
 
       if (!(this._poly instanceof L.Polygon)) {
         this._poly._map.off('draw:created', this._onFinishExtension, this);
-        delete this._extending;
+
+        if (this._extending) {
+          if (this._extending.enabled()) {
+            this._extending.disable();
+          }
+
+          delete this._extending;
+        }
       }
     }
 	},
