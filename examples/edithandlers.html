@@ -55,6 +55,15 @@
 
 		map.addLayer(polyline);
 
+    var polyline2 = new L.Polyline([
+			[51.50, -0.04],
+			[51.52, -0.02]
+		]);
+
+		polyline2.editing.enable();
+
+		map.addLayer(polyline2);
+
 		var circle = L.circle([51.53, -0.06], 600);
 
 		circle.editing.enable();
