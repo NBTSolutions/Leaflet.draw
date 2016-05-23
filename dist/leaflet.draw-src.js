@@ -1206,7 +1206,7 @@ L.Edit.Poly = L.Handler.extend({
 
       if (!(this._poly instanceof L.Polygon)) {
         this._poly._map.off('draw:created', this._onFinishExtension, this);
-        delete this._extending;
+        this._clearExtension();
       }
     }
 	},
@@ -1276,7 +1276,7 @@ L.Edit.Poly = L.Handler.extend({
 		this._updateIndexes(i, -1);
 
 		marker
-      .off( 'click', this._check_later, this)
+      .off('click', this._check_later, this)
 			.off('drag', this._onMarkerDrag, this)
 			.off('dragend', this._fireEdit, this)
 			.off('dblclick', this._onMarkerDbClick, this);
@@ -1348,9 +1348,12 @@ L.Edit.Poly = L.Handler.extend({
   },
 
   _onFinishExtension: function(e) {
-    e.layer.spliceLatLngs(0, 1)
+
+    if (!this._extendOrder) { return; }
 
     var newVertices = e.layer.getLatLngs();
+    newVertices.splice(0, 1);
+
     for (var i = 0, n = newVertices.length; i < n; i++) {
       if (this._extendOrder === 1) {
         this._poly.addLatLng(newVertices[i]);
@@ -1360,9 +1363,18 @@ L.Edit.Poly = L.Handler.extend({
     }
 
     this.updateMarkers();
+    this._clearExtension();
+  },
 
-    delete this._extending;
-    delete this._extendOrder;
+  _clearExtension: function() {
+    if (this._extending) {
+      if (this._extending.enabled()) {
+        this._extending.disable();
+      }
+
+      delete this._extending;
+      delete this._extendOrder;
+    }
   },
 
 	_onMarkerDbClick: function (e) {
