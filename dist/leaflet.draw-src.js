@@ -1198,11 +1198,13 @@ L.Edit.Poly = L.Handler.extend({
 		}
 
     if (poly._map) {
-      this._mouseMarker
-        .off('mousedown', this._onMouseDown, this);
-        // .off('mouseup', this._onMouseUp, this);
-      poly._map.removeLayer(this._mouseMarker);
-      delete this._mouseMarker;
+
+      if (this._mouseMarker) {
+        this._mouseMarker
+          .off('mousedown', this._onMouseDown, this);
+        poly._map.removeLayer(this._mouseMarker);
+        delete this._mouseMarker;
+      }
 
       if (!(this._poly instanceof L.Polygon)) {
         this._poly._map.off('draw:created', this._onFinishExtension, this);
