@@ -6,12 +6,14 @@ Development branch: [0.2.4-master](https://github.com/NBTSolutions/Leaflet.draw/
 
 # Change log
 
+* Allow extension line to snap to its parent layer's guide layers (05/24/2016)
+
 * Change default polyline editing behavior (05/20/2016)
 
   * double click any existing vertex will remove that vertex
 
   * single click on the start/end point of the polyline will trigger line extension
 
-  * **the impact to polygon editing is unknow** 
+  * **the impact to polygon editing is unknow**
 
 * Disable default ESC event at edit tool (05/06/2016)
