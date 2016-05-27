@@ -207,6 +207,7 @@ L.Edit.Poly = L.Handler.extend({
         weight: 4,
         opacity: 0.5
       },
+      zIndexOffset: this.options.extensionZIndexOffset || 2000,
       snapDistance: 15,
       guideLayers: (this._snapper ? this._snapper._guides : null) || []
     });
