@@ -1309,6 +1309,9 @@ L.Edit.Poly = L.Handler.extend({
     // the user can only extend polyline
     if (this._poly instanceof L.Polygon) { return; }
 
+    // if the user are extending line now, don't draw another extension line
+    if (this._extending) { return; }
+
     var latLng = e.latlng;
     var latLngs = this._poly.getLatLngs();
 
