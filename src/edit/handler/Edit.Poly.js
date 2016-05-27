@@ -180,7 +180,7 @@ L.Edit.Poly = L.Handler.extend({
     if (this._poly instanceof L.Polygon) { return; }
 
     // if the user are extending line now, don't draw another extension line
-    if (this._extending) { return; }
+    if (this._extending && this._extending.enabled()) { return; }
 
     var latLng = e.latlng;
     var latLngs = this._poly.getLatLngs();
