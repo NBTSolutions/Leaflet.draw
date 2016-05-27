@@ -1145,6 +1145,7 @@ L.Edit.Poly = L.Handler.extend({
 	initialize: function (poly, options) {
 		this._poly = poly;
     this._ignoreDragging = false;
+    this._extendable = true;
 		L.setOptions(this, options);
 	},
 
@@ -1164,6 +1165,7 @@ L.Edit.Poly = L.Handler.extend({
 
       if (!(this._poly instanceof L.Polygon)) {
         this._poly._map.on('draw:created', this._onFinishExtension, this);
+        this._poly._map.on('extend:start', this._onExtendStart, this);
       }
 
 			this._poly._map.addLayer(this._markerGroup);
@@ -1208,6 +1210,7 @@ L.Edit.Poly = L.Handler.extend({
 
       if (!(this._poly instanceof L.Polygon)) {
         this._poly._map.off('draw:created', this._onFinishExtension, this);
+        this._poly._map.off('extend:start', this._onExtendStart, this);
         this._clearExtension();
       }
     }
@@ -1309,6 +1312,8 @@ L.Edit.Poly = L.Handler.extend({
     // the user can only extend polyline
     if (this._poly instanceof L.Polygon) { return; }
 
+    if (!this._extendable) { return; }
+
     // if the user are extending line now, don't draw another extension line
     if (this._extending && this._extending.enabled()) { return; }
 
@@ -1346,9 +1351,18 @@ L.Edit.Poly = L.Handler.extend({
 
     this._extending._currentLatLng = latLng;
     this._extending.addVertex(latLng);
+
+    this._poly._map.fire('extend:start');
+  },
+
+  _onExtendStart: function() {
+    if (this._extending && this._extending.enabled()) { return; }
+    this._extendable = false;
   },
 
   _onFinishExtension: function(e) {
+
+    this._extendable = true;
 
     if (!this._extendOrder) { return; }
 
@@ -1376,6 +1390,10 @@ L.Edit.Poly = L.Handler.extend({
       delete this._extending;
       delete this._extendOrder;
     }
+  },
+
+  _setExtendable: function(value) {
+
   },
 
 	_onMarkerDbClick: function (e) {
