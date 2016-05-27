@@ -1164,7 +1164,7 @@ L.Edit.Poly = L.Handler.extend({
 			}
 
       if (!(this._poly instanceof L.Polygon)) {
-        this._poly._map.on('draw:created', this._onFinishExtension, this);
+        this._poly._map.on('draw:created', this._onExtendFinish, this);
         this._poly._map.on('extend:start', this._onExtendStart, this);
       }
 
@@ -1209,7 +1209,7 @@ L.Edit.Poly = L.Handler.extend({
       }
 
       if (!(this._poly instanceof L.Polygon)) {
-        this._poly._map.off('draw:created', this._onFinishExtension, this);
+        this._poly._map.off('draw:created', this._onExtendFinish, this);
         this._poly._map.off('extend:start', this._onExtendStart, this);
         this._clearExtension();
       }
@@ -1361,11 +1361,13 @@ L.Edit.Poly = L.Handler.extend({
     this._extendable = false;
   },
 
-  _onFinishExtension: function(e) {
+  _onExtendFinish: function(e) {
 
     this._extendable = true;
 
     if (!this._extendOrder) { return; }
+
+    if (!(this._extending && this._extending.enabled())) { return; }
 
     var newVertices = e.layer.getLatLngs();
     newVertices.splice(0, 1);
