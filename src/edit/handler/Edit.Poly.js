@@ -263,10 +263,6 @@ L.Edit.Poly = L.Handler.extend({
     }
   },
 
-  _setExtendable: function(value) {
-
-  },
-
 	_onMarkerDbClick: function (e) {
 
     window.setTimeout( this._clear_h, 0 );
