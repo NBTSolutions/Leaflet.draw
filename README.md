@@ -8,7 +8,7 @@ Development branch: [0.2.4-master](https://github.com/NBTSolutions/Leaflet.draw/
 
 * `L.EditToolbar.Edit` accepts option `extensionZIndexOffset` to specify the z-index offset of the extension line (05/27/2016)
 
-* Prevent user to create multiple extension lines for one existing feature (05/27/2016)
+* Prevent user to create multiple extension globally (05/27/2016)
 
 * Allow extension line to snap to its parent layer's guide layers (05/24/2016)
 

@@ -182,9 +182,10 @@ L.Edit.Poly = L.Handler.extend({
     // the user can only extend polyline
     if (this._poly instanceof L.Polygon) { return; }
 
+    // check if the user is extending the other line
     if (!this._extendable) { return; }
 
-    // if the user are extending line now, don't draw another extension line
+    // if the user are extending this line now, don't draw another extension line
     if (this._extending && this._extending.enabled()) { return; }
 
     var latLng = e.latlng;
