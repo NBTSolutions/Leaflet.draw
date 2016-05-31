@@ -250,17 +250,15 @@ L.Edit.Poly = L.Handler.extend({
       }
     }
 
+    this._poly._map.removeLayer(e.layer);
+
     this.updateMarkers();
     this._clearExtension();
   },
 
   _clearExtension: function() {
     if (this._extending) {
-      if (this._extending.enabled()) {
-        this._extending.disable();
-      }
-
-      this._poly._map.removeLayer(this._extending);
+      this._extending.disable();
 
       delete this._extending;
       delete this._extendOrder;
