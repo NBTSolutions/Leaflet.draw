@@ -1390,6 +1390,8 @@ L.Edit.Poly = L.Handler.extend({
         this._extending.disable();
       }
 
+      this._poly._map.removeLayer(this._extending);
+
       delete this._extending;
       delete this._extendOrder;
     }
