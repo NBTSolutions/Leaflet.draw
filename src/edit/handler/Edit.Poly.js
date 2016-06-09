@@ -39,22 +39,6 @@ L.Edit.Poly = L.Handler.extend({
       }
 
 			this._poly._map.addLayer(this._markerGroup);
-
-      if (!this._mouseMarker) {
-        this._mouseMarker = L.marker(this._poly._map.getCenter(), {
-          icon: L.divIcon({
-            className: 'leaflet-mouse-marker',
-            iconAnchor: [20, 20],
-            iconSize: [40, 40]
-          }),
-          opacity: 0,
-          zIndexOffset: this.options.zIndexOffset
-        });
-
-        this._mouseMarker
-          .on('mousedown', this._onMouseDown, this)
-          .addTo(this._poly._map);
-      }
 		}
 	},
 
@@ -70,14 +54,6 @@ L.Edit.Poly = L.Handler.extend({
 		}
 
     if (poly._map) {
-
-      if (this._mouseMarker) {
-        this._mouseMarker
-          .off('mousedown', this._onMouseDown, this);
-        poly._map.removeLayer(this._mouseMarker);
-        delete this._mouseMarker;
-      }
-
       if (!(this._poly instanceof L.Polygon)) {
         this._poly._map.off('draw:created', this._onExtendFinish, this);
         this._poly._map.off('extend:start', this._onExtendStart, this);
