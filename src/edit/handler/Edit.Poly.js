@@ -95,9 +95,8 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		drawError: {
 			color: '#b00b00',
 			timeout: 1000
-		}
-
-
+		},
+    extensionOptions: {}
 	},
 
 	// @method intialize(): void
@@ -362,24 +361,16 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
     if (!this._extendOrder) { return; }
 
     this._extending = new L.Draw.Polyline(this._poly._map, {
-      newIcon: new L.DivIcon({
-        iconSize: new L.Point(10, 10),
-        className: 'leaflet-div-icon leaflet-editing-icon'
-      }),
-      shapeOptions: {
-        color: '#c13104',
-        weight: 4,
-        opacity: 0.5
-      },
-      zIndexOffset: this.options.extensionZIndexOffset || 2000,
-      snapDistance: 15,
+      shapeOptions: this.options.extensionOptions.shapeOptions,
+      zIndexOffset: this.options.extensionOptions.zIndexOffset,
+      snapDistance: this.options.snapDistance,
+      snapMapIndex: this.options.snapMapIndex,
       guideLayers: (this._snapper ? this._snapper._guides : null) || []
     });
 
     this._extending.enable();
-
-    this._extending._currentLatLng = latLng;
     this._extending.addVertex(latLng);
+    this._extending._currentLatLng = latLng;
 
     this._poly._map.fire('extend:start');
   },
@@ -574,11 +565,9 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
   // source code from leaflet-click_0.7
   _check_later: function(e) {
+    this._clear_h();
 
     var that = this;
-
-    this._clear_h();
-    this._h = window.setTimeout( check, 500 );
 
     function check() {
       if (!that._ignoreDragging) {
@@ -587,6 +576,8 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
         that._ignoreDragging = false;
       }
     }
+
+    this._h = window.setTimeout(check, 500);
   },
 
   // source code from leaflet-click_0.7

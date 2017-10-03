@@ -39,9 +39,9 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		feet: true, // When not metric, to use feet instead of yards for display.
 		nautic: false, // When not metric, not feet use nautic mile for display
 		showLength: true, // Whether to display distance in the tooltip
-        zIndexOffset: 2000, // This should be > than the highest z-index any map layers
-        factor: 1, // To change distance calculation
-        maxPoints: 0 // Once this number of points are placed, finish shape
+    zIndexOffset: 2000, // This should be > than the highest z-index any map layers
+    factor: 1, // To change distance calculation
+    maxPoints: 0 // Once this number of points are placed, finish shape
 	},
 
 	// @method initialize(): void
