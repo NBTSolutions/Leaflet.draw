@@ -395,7 +395,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
       if (this._extendOrder === 1) {
         this._poly.addLatLng(newVertices[i]);
       } else if (this._extendOrder === -1) {
-        this._poly.spliceLatLngs(0, 0, newVertices[i]);
+        this._spliceLatLngs(0, 0, newVertices[i]);
       }
     }
 
