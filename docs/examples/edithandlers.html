@@ -3,10 +3,10 @@
 <head>
 	<title>Leaflet.draw vector editing handlers</title>
 
-	<link rel="stylesheet" href="libs/leaflet.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
   <link rel="stylesheet" href="../../src/leaflet.draw.css" />
 
-	<script src="libs/leaflet-src.js"></script>
+	<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
   <script src="https://rawgit.com/makinacorpus/Leaflet.GeometryUtil/master/src/leaflet.geometryutil.js"></script>
 
 	<script src="../../src/Leaflet.draw.js"></script>
@@ -35,7 +35,7 @@
 		var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 			osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 			osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-			map = new L.Map('map', {layers: [osm], center: new L.LatLng(51.505, -0.04), zoom: 13});
+			map = new L.Map('map', {layers: [osm], center: new L.LatLng(51.505, -0.04), zoom: 13, preferCanvas: true});
 
 		var polygon = new L.Polygon([
 			[51.51, -0.1],

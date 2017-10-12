@@ -8,7 +8,6 @@ _site
 coverage/
 *.js.html
 .mailmap
-bower.json
 component.json
 debug/local/
 Gemfile.lock

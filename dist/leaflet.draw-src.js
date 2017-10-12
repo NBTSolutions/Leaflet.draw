@@ -1,5 +1,5 @@
 /*
- Leaflet.draw 0.4.12+aa8b76e, a plugin that adds drawing and editing tools to Leaflet powered maps.
+ Leaflet.draw 0.4.12+3791238, a plugin that adds drawing and editing tools to Leaflet powered maps.
  (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
 
  https://github.com/Leaflet/Leaflet.draw
@@ -8,7 +8,7 @@
 (function (window, document, undefined) {/**
  * Leaflet.draw assumes that you have already included the Leaflet library.
  */
-L.drawVersion = "0.4.12+aa8b76e";
+L.drawVersion = "0.4.12+3791238";
 /**
  * @class L.Draw
  * @aka Draw
@@ -770,10 +770,10 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			var dragCheckDistance = L.point(clientX, clientY)
 				.distanceTo(this._mouseDownOrigin);
 			var lastPtDistance = this._calculateFinishDistance(e.latlng);
-            if(this.options.maxPoints > 1 && this.options.maxPoints == this._markers.length+1) {
-                this.addVertex(e.latlng);
-                this._finishShape();
-            } else if (lastPtDistance < 10 && L.Browser.touch) {
+      if(this.options.maxPoints > 1 && this.options.maxPoints == this._markers.length+1) {
+          this.addVertex(e.latlng);
+          this._finishShape();
+      } else if (lastPtDistance < 10 && L.Browser.touch) {
 				this._finishShape();
 			} else if (Math.abs(dragCheckDistance) < 9 * (window.devicePixelRatio || 1)) {
 				this.addVertex(e.latlng);
@@ -808,31 +808,33 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	},
 
 	// calculate if we are currently within close enough distance
-	// of the closing point (first point for shapes, last point for lines)
+	// of the closing point (first or last point for shapes, last point for lines)
 	// this is semi-ugly code but the only reliable way i found to get the job done
 	// note: calculating point.distanceTo between mouseDownOrigin and last marker did NOT work
 	_calculateFinishDistance: function (potentialLatLng) {
-		var lastPtDistance
 		if (this._markers.length > 0) {
-				var finishMarker;
 				if (this.type === L.Draw.Polyline.TYPE) {
-					finishMarker = this._markers[this._markers.length - 1];
+					var finishMarker = this._markers[this._markers.length - 1];
+          var lastMarkerPoint = this._map.latLngToContainerPoint(finishMarker.getLatLng());
+          var potentialMarkerPint = this._map.latLngToContainerPoint(potentialLatLng);
+
+          return lastMarkerPoint.distanceTo(potentialMarkerPint);
 				} else if (this.type === L.Draw.Polygon.TYPE) {
-					finishMarker = this._markers[0];
-				} else {
-					return Infinity;
+					var finishMarkerA = this._markers[0];
+          var lastMarkerPointA = this._map.latLngToContainerPoint(finishMarkerA.getLatLng());
+          var potentialMarkerPintA = this._map.latLngToContainerPoint(potentialLatLng);
+          var distA = lastMarkerPointA.distanceTo(potentialMarkerPintA);
+
+          var finishMarkerZ = this._markers[this._markers.length - 1];
+          var lastMarkerPointZ = this._map.latLngToContainerPoint(finishMarkerZ.getLatLng());
+          var potentialMarkerPintZ = this._map.latLngToContainerPoint(potentialLatLng);
+          var distZ = lastMarkerPointZ.distanceTo(potentialMarkerPintZ);
+
+          return distA < distZ ? distA : distZ;
 				}
-				var lastMarkerPoint = this._map.latLngToContainerPoint(finishMarker.getLatLng()),
-				potentialMarker = new L.Marker(potentialLatLng, {
-					icon: this.options.icon,
-					zIndexOffset: this.options.zIndexOffset * 2
-				});
-				var potentialMarkerPint = this._map.latLngToContainerPoint(potentialMarker.getLatLng());
-				lastPtDistance = lastMarkerPoint.distanceTo(potentialMarkerPint);
-			} else {
-				lastPtDistance = Infinity;
 			}
-			return lastPtDistance;
+
+			return Infinity;
 	},
 
 	_updateFinishHandler: function () {
@@ -2153,7 +2155,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
       if (this._extendOrder === 1) {
         this._poly.addLatLng(newVertices[i]);
       } else if (this._extendOrder === -1) {
-        this._poly.spliceLatLngs(0, 0, newVertices[i]);
+        this._spliceLatLngs(0, 0, newVertices[i]);
       }
     }
 
