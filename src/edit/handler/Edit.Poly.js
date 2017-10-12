@@ -86,7 +86,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	options: {
 		icon: new L.DivIcon({
       // the icon size is changed for vetro's icon
-			iconSize: new L.Point(10, 10),
+			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon'
 		}),
 		touchIcon: new L.DivIcon({
@@ -103,9 +103,9 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	// @method intialize(): void
 	initialize: function (poly, latlngs, options) {
 		// if touch, switch to touch icon
-		if (L.Browser.touch) {
-			this.options.icon = this.options.touchIcon;
-		}
+		// if (L.Browser.touch) {
+		// 	this.options.icon = this.options.touchIcon;
+		// }
 		this._poly = poly;
     this._ignoreDragging = false;
     this._extendable = true;

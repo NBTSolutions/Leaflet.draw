@@ -47,9 +47,9 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	// @method initialize(): void
 	initialize: function (map, options) {
 		// if touch, switch to touch icon
-		if (L.Browser.touch) {
-			this.options.icon = this.options.touchIcon;
-		}
+		// if (L.Browser.touch) {
+		// 	this.options.icon = this.options.touchIcon;
+		// }
 
 		// Need to set this here to ensure the correct message is used.
 		this.options.drawError.message = L.drawLocal.draw.handlers.polyline.error;

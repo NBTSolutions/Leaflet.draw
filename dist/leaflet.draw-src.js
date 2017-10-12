@@ -1,5 +1,5 @@
 /*
- Leaflet.draw 0.4.12+740e5f0, a plugin that adds drawing and editing tools to Leaflet powered maps.
+ Leaflet.draw 0.4.12+f94e506, a plugin that adds drawing and editing tools to Leaflet powered maps.
  (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
 
  https://github.com/Leaflet/Leaflet.draw
@@ -8,7 +8,7 @@
 (function (window, document, undefined) {/**
  * Leaflet.draw assumes that you have already included the Leaflet library.
  */
-L.drawVersion = "0.4.12+740e5f0";
+L.drawVersion = "0.4.12+f94e506";
 /**
  * @class L.Draw
  * @aka Draw
@@ -518,9 +518,9 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	// @method initialize(): void
 	initialize: function (map, options) {
 		// if touch, switch to touch icon
-		if (L.Browser.touch) {
-			this.options.icon = this.options.touchIcon;
-		}
+		// if (L.Browser.touch) {
+		// 	this.options.icon = this.options.touchIcon;
+		// }
 
 		// Need to set this here to ensure the correct message is used.
 		this.options.drawError.message = L.drawLocal.draw.handlers.polyline.error;
@@ -1846,7 +1846,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	options: {
 		icon: new L.DivIcon({
       // the icon size is changed for vetro's icon
-			iconSize: new L.Point(10, 10),
+			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon'
 		}),
 		touchIcon: new L.DivIcon({
@@ -1863,9 +1863,9 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	// @method intialize(): void
 	initialize: function (poly, latlngs, options) {
 		// if touch, switch to touch icon
-		if (L.Browser.touch) {
-			this.options.icon = this.options.touchIcon;
-		}
+		// if (L.Browser.touch) {
+		// 	this.options.icon = this.options.touchIcon;
+		// }
 		this._poly = poly;
     this._ignoreDragging = false;
     this._extendable = true;
