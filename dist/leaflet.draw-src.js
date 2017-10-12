@@ -1,5 +1,5 @@
 /*
- Leaflet.draw 0.4.12+3791238, a plugin that adds drawing and editing tools to Leaflet powered maps.
+ Leaflet.draw 0.4.12+740e5f0, a plugin that adds drawing and editing tools to Leaflet powered maps.
  (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
 
  https://github.com/Leaflet/Leaflet.draw
@@ -8,7 +8,7 @@
 (function (window, document, undefined) {/**
  * Leaflet.draw assumes that you have already included the Leaflet library.
  */
-L.drawVersion = "0.4.12+3791238";
+L.drawVersion = "0.4.12+740e5f0";
 /**
  * @class L.Draw
  * @aka Draw
@@ -1845,7 +1845,8 @@ L.Edit.Poly = L.Handler.extend({
 L.Edit.PolyVerticesEdit = L.Handler.extend({
 	options: {
 		icon: new L.DivIcon({
-			iconSize: new L.Point(8, 8),
+      // the icon size is changed for vetro's icon
+			iconSize: new L.Point(10, 10),
 			className: 'leaflet-div-icon leaflet-editing-icon'
 		}),
 		touchIcon: new L.DivIcon({
