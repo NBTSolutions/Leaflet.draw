@@ -1,5 +1,5 @@
 /*
- Leaflet.draw 0.4.12+f94e506, a plugin that adds drawing and editing tools to Leaflet powered maps.
+ Leaflet.draw 0.4.12+953164e, a plugin that adds drawing and editing tools to Leaflet powered maps.
  (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
 
  https://github.com/Leaflet/Leaflet.draw
@@ -8,7 +8,7 @@
 (function (window, document, undefined) {/**
  * Leaflet.draw assumes that you have already included the Leaflet library.
  */
-L.drawVersion = "0.4.12+f94e506";
+L.drawVersion = "0.4.12+953164e";
 /**
  * @class L.Draw
  * @aka Draw
@@ -1122,10 +1122,10 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 
 		// Add and update the double click handler
 		if (markerCount > 2) {
-			this._markers[markerCount - 1].on('dblclick', this._finishShape, this);
+			this._markers[markerCount - 1].on('click', this._finishShape, this);
 			// Only need to remove handler if has been added before
 			if (markerCount > 3) {
-				this._markers[markerCount - 2].off('dblclick', this._finishShape, this);
+				this._markers[markerCount - 2].off('click', this._finishShape, this);
 			}
 		}
 	},
@@ -1193,7 +1193,7 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 			this._markers[0].off('click', this._finishShape, this);
 
 			if (markerCount > 2) {
-				this._markers[markerCount - 1].off('dblclick', this._finishShape, this);
+				this._markers[markerCount - 1].off('click', this._finishShape, this);
 			}
 		}
 	}
