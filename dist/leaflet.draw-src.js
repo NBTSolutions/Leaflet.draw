@@ -1088,7 +1088,7 @@ L.Edit.Marker = L.Handler.extend({
 		if (!this._icon) {
 			return;
 		}
-		
+
 		// This is quite naughty, but I don't see another way of doing it. (short of setting a new icon)
 		var icon = this._icon;
 
@@ -1266,6 +1266,7 @@ L.Edit.Poly = L.Handler.extend({
 	_fireEdit: function () {
 		this._poly.edited = true;
 		this._poly.fire('edit');
+		this._poly._map.fire('draw:editvertex', { layers: this._markerGroup });
 	},
 
 	_onMarkerDrag: function (e) {
@@ -2829,12 +2830,10 @@ L.EditToolbar.Edit = L.Handler.extend({
 			this._featureGroup.eachLayer(this._enableLayerEdit, this);
 
 			this._tooltip = new L.Tooltip(this._map);
-			this._tooltip.updateContent({
-				text: L.drawLocal.edit.handlers.edit.tooltip.text,
-				subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
-			});
+			this._updateTooltip();
 
 			this._map.on('mousemove', this._onMouseMove, this);
+			this._map.on('draw:editvertex', this._updateTooltip, this);
 		}
 	},
 
@@ -2890,6 +2889,17 @@ L.EditToolbar.Edit = L.Handler.extend({
 				};
 			}
 		}
+	},
+
+	_getTooltipText: function(){
+		return ({
+			text: L.drawLocal.edit.handlers.edit.tooltip.text,
+			subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
+		});
+	},
+
+	_updateTooltip: function(){
+		this._tooltip.updateContent(this._getTooltipText());
 	},
 
 	_revertLayer: function (layer) {
