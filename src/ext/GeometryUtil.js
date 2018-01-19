@@ -106,6 +106,7 @@ L.GeometryUtil = L.extend(L.GeometryUtil || {}, {
 	// @method readableDistance(distance, isMetric, useFeet, isNauticalMile, precision): string
 	// Converts metric distance to distance string.
 	// The value will be rounded as defined by the precision option object.
+	// If 'useFeet' and you want it to switch to miles beyond 5280ft, set isNauticalMile to true as well.
 	readableDistance: function (distance, isMetric, isFeet, isNauticalMile, precision) {
 		var distanceStr,
 			units,
@@ -132,7 +133,11 @@ L.GeometryUtil = L.extend(L.GeometryUtil || {}, {
 			break;
 		case 'feet':
 			distance *= 1.09361 * 3;
-			distanceStr = L.GeometryUtil.formattedNumber(distance, precision['ft']) + ' ft';
+			if (distance > 5280 && isNauticalMile) {
+				distanceStr = L.GeometryUtil.formattedNumber(distance / 5280, precision['mi']) + ' miles';
+			} else {
+				distanceStr = L.GeometryUtil.formattedNumber(distance, precision['ft']) + ' ft';
+			}
 
 			break;
 		case 'nauticalMile':
