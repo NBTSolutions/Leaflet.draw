@@ -1,5 +1,5 @@
 /*
- Leaflet.draw 0.4.12+953164e, a plugin that adds drawing and editing tools to Leaflet powered maps.
+ Leaflet.draw 0.4.12+921f0cc, a plugin that adds drawing and editing tools to Leaflet powered maps.
  (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
 
  https://github.com/Leaflet/Leaflet.draw
@@ -8,7 +8,7 @@
 (function (window, document, undefined) {/**
  * Leaflet.draw assumes that you have already included the Leaflet library.
  */
-L.drawVersion = "0.4.12+953164e";
+L.drawVersion = "0.4.12+921f0cc";
 /**
  * @class L.Draw
  * @aka Draw
@@ -508,6 +508,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		},
 		metric: true, // Whether to use the metric measurement system or imperial
 		feet: true, // When not metric, to use feet instead of yards for display.
+		miles: true, // when not metric, feet change to miles for display over 5280.
 		nautic: false, // When not metric, not feet use nautic mile for display
 		showLength: true, // Whether to display distance in the tooltip
     zIndexOffset: 2000, // This should be > than the highest z-index any map layers
@@ -1000,7 +1001,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			distance = previousLatLng && currentLatLng ? this._measurementRunningTotal + this._map.distance(currentLatLng, previousLatLng) * (this.options.factor || 1) : this._measurementRunningTotal || 0 ;
 		}
 
-		return L.GeometryUtil.readableDistance(distance, this.options.metric, this.options.feet, this.options.nautic, this.options.precision);
+		return L.GeometryUtil.readableDistance(distance, this.options.metric, this.options.feet, this.options.nautic || this.options.miles, this.options.precision);
 	},
 
 	_showErrorTooltip: function () {
@@ -3272,6 +3273,7 @@ L.GeometryUtil = L.extend(L.GeometryUtil || {}, {
 	// @method readableDistance(distance, isMetric, useFeet, isNauticalMile, precision): string
 	// Converts metric distance to distance string.
 	// The value will be rounded as defined by the precision option object.
+	// If 'useFeet' and you want it to switch to miles beyond 5280ft, set isNauticalMile to true as well.
 	readableDistance: function (distance, isMetric, isFeet, isNauticalMile, precision) {
 		var distanceStr,
 			units,
@@ -3298,7 +3300,11 @@ L.GeometryUtil = L.extend(L.GeometryUtil || {}, {
 			break;
 		case 'feet':
 			distance *= 1.09361 * 3;
-			distanceStr = L.GeometryUtil.formattedNumber(distance, precision['ft']) + ' ft';
+			if (distance > 5280 && isNauticalMile) {
+				distanceStr = L.GeometryUtil.formattedNumber(distance / 5280, precision['mi']) + ' miles';
+			} else {
+				distanceStr = L.GeometryUtil.formattedNumber(distance, precision['ft']) + ' ft';
+			}
 
 			break;
 		case 'nauticalMile':
