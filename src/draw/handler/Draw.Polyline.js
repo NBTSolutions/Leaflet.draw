@@ -37,6 +37,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		},
 		metric: true, // Whether to use the metric measurement system or imperial
 		feet: true, // When not metric, to use feet instead of yards for display.
+		miles: true, // when not metric, feet change to miles for display over 5280.
 		nautic: false, // When not metric, not feet use nautic mile for display
 		showLength: true, // Whether to display distance in the tooltip
     zIndexOffset: 2000, // This should be > than the highest z-index any map layers
@@ -529,7 +530,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			distance = previousLatLng && currentLatLng ? this._measurementRunningTotal + this._map.distance(currentLatLng, previousLatLng) * (this.options.factor || 1) : this._measurementRunningTotal || 0 ;
 		}
 
-		return L.GeometryUtil.readableDistance(distance, this.options.metric, this.options.feet, this.options.nautic, this.options.precision);
+		return L.GeometryUtil.readableDistance(distance, this.options.metric, this.options.feet, this.options.nautic || this.options.miles, this.options.precision);
 	},
 
 	_showErrorTooltip: function () {
